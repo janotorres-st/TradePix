@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - TradePix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body class="bg-dark text-white">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'index' %}">TradePix</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Inicio</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'gestion_usuarios' %}">Gestión de Usuarios</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'carrito' %}">Ver Carrito</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Registro</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <h2 class="mb-4 text-center text-white">Finalizar Compra</h2>
+
+        <div class="card bg-secondary text-white mb-4">
+            <div class="card-header">
+                Resumen de la Orden
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush bg-secondary">
+                    {% for item in carrito_items %}
+                    <li class="list-group-item bg-secondary text-white d-flex justify-content-between align-items-center">
+                        <div>
+                            {{ item.producto_obj.nombre }}
+                            <span class="badge bg-info text-dark rounded-pill">{{ item.cantidad }}</span>
+                        </div>
+                        <span class="badge bg-success rounded-pill">${{ item.subtotal|floatformat:0 }}</span>
+                    </li>
+                    {% endfor %}
+                    <li class="list-group-item bg-dark text-white d-flex justify-content-between align-items-center fw-bold">
+                        <span>Total</span>
+                        <span>${{ total_carrito|floatformat:0 }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card bg-secondary text-white">
+            <div class="card-header">
+                Información de Pago y Envío
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'finalizar_compra' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label">Dirección de Envío</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tarjeta" class="form-label">Número de Tarjeta</label>
+                        <input type="text" class="form-control" id="tarjeta" name="tarjeta" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg mt-3">Completar Compra</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

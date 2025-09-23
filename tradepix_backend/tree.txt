@@ -1,0 +1,18 @@
+Folder PATH listing
+Volume serial number is D6A4-3DC6
+C:.
+¦   manage.py
+¦   tree.txt
+¦   
++---tradepix_backend
+    ¦   asgi.py
+    ¦   settings.py
+    ¦   urls.py
+    ¦   wsgi.py
+    ¦   __init__.py
+    ¦   
+    +---__pycache__
+            settings.cpython-312.pyc
+            urls.cpython-312.pyc
+            __init__.cpython-312.pyc
+            
