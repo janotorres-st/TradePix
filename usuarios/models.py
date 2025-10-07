@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     fecha_nacimiento = models.DateField(null=True, blank=True)
     
-    # Agrega related_name para evitar conflictos con los modelos de Auth de Django
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='customuser_set',

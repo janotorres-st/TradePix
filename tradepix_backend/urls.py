@@ -26,8 +26,9 @@ def index_view(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('productos.urls')), # <--- ¡Cambia esta línea!
+    path('', include('productos.urls')), 
     path('usuarios/', include('usuarios.urls')),
+    path('api/', include('productos.api_urls')), 
 ]
 
 if settings.DEBUG:

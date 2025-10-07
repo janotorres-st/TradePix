@@ -1,15 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Producto, Categoria, Orden, OrdenItem
 from decimal import Decimal
 from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserChangeForm
+from rest_framework import viewsets
+from .serializers import ProductoSerializer, CategoriaSerializer
+import requests
 
 
-@login_required(login_url='login')
-def carrito_view(request):
-    return render(request, 'carrito.html')
+# VISTAS DE NAVEGACIÓN Y CARRITO
 
 def index(request):
     return render(request, 'index.html')
@@ -45,6 +47,7 @@ def agregar_al_carrito(request, producto_id):
     request.session['cart'] = cart
     return redirect('carrito')
 
+@login_required(login_url='login')
 def carrito_view(request):
     cart = request.session.get('cart', {})
     producto_ids = cart.keys()
@@ -103,6 +106,9 @@ def actualizar_carrito(request, producto_id):
         
     return redirect('carrito')
 
+
+# VISTAS DE CHECKOUT Y ORDEN
+
 @login_required
 def checkout(request):
     cart = request.session.get('cart', {})
@@ -133,18 +139,60 @@ def checkout(request):
     
     return render(request, 'checkout.html', context)
 
+
+@login_required
 def finalizar_compra(request):
     if request.method == 'POST':
-        # Está simulando, que pasa, cuando termina simplemente vacía el carro, no voy a estar agregando pagos reales jajaj.
-        if 'cart' in request.session:
-            del request.session['cart']
+        cart = request.session.get('cart', {})
+        
+        if not cart:
+            return redirect('checkout')
+        
+        producto_ids = cart.keys()
+        productos = Producto.objects.filter(id__in=producto_ids)
+        
+        # 1. Preparar datos y calcular el total final
+        total_orden = Decimal('0.00')
+        orden_items_a_guardar = []
+        
+        for producto in productos:
+            quantity = cart[str(producto.id)]['quantity']
+            item_total = producto.precio * quantity
+            total_orden += item_total
+            
+            orden_items_a_guardar.append({
+                'producto': producto,
+                'cantidad': quantity,
+                'subtotal': item_total,
+            })
+            
+        # 2. Creamos la Orden en la base de datos
+        orden = Orden.objects.create(
+            user=request.user,
+            total=total_orden
+        )
+        
+        # 3. Guardamos los items de la orden
+        for item_data in orden_items_a_guardar:
+            OrdenItem.objects.create(
+                orden=orden,
+                producto=item_data['producto'],
+                cantidad=item_data['cantidad'],
+                subtotal=item_data['subtotal']
+            )
+            
+        # 4. Vaciar el carro
+        request.session['cart'] = {}
         
         return redirect('orden_confirmada')
-    
-    return redirect('index')
+        
+    return redirect('checkout')
 
 def orden_confirmada(request):
     return render(request, 'orden_confirmada.html')
+
+
+# VISTAS DE GESTIÓN DE USUARIOS
 
 def es_staff(user):
     return user.is_staff
@@ -202,31 +250,63 @@ def agregar_usuario(request):
     }
     return render(request, 'agregar_usuario.html', context)
 
-@login_required
-def finalizar_compra(request):
-    if request.method == 'POST':
-        if 'carrito' in request.session and request.session['carrito']:
-            carrito = request.session['carrito']
+
+# -------------------------------------------------------------------------
+# VISTAS DE CONSUMO DE SERVICIOS WEB EXTERNOS (APIs Chilenas)
+# NOTA: La API de rut falló así que está comentada.
+
+@user_passes_test(es_staff)
+def indicadores_externos(request):
+    data_externa = {}
+    
+    try:
+        # 1. Indicador de Envío (SIMULACIÓN LOCAL)
+        try:
+            # Es una simulación local porque ocurrieron problemas con ciertos sitios y API's.
+            comuna_consultada = "Santiago Centro (Simulación)" 
+            costo_base = 3500
             
-            # 1. Crea la Orden
-            total_orden = sum(item['subtotal'] for item in carrito.values())
-            orden = Orden.objects.create(
-                user=request.user,
-                total=Decimal(str(total_orden))
-            )
+            # Lógica de SIMULACIÓN de Cotización:
+            costo_envio = costo_base + 500
+            codigo_ejemplo = '8320000'
+                
+            data_externa['servicio_envio'] = 'Simulación Local'
+            data_externa['comuna_consulta'] = comuna_consultada
+            data_externa['codigo_postal_ejemplo'] = codigo_ejemplo
+            data_externa['costo_simulado'] = costo_envio
             
-            # 2. Guardar los compras
-            for item_id, item_data in carrito.items():
-                producto = get_object_or_404(Producto, id=int(item_id))
-                OrdenItem.objects.create(
-                    orden=orden,
-                    producto=producto,
-                    cantidad=item_data['cantidad'],
-                    subtotal=Decimal(str(item_data['subtotal']))
-                )
-            
-            # 3. Carro limpio
-            request.session['carrito'] = {}
-            
-            return redirect('orden_confirmada')
-    return redirect('checkout')
+        except Exception as e:
+            data_externa['error_envio'] = f"Error al simular datos de envío: {e}"
+
+        # 2. Indicador de Validación de RUT (el API falla :( problemas de DNS)
+        # --------------------------------------------------------------------------
+        data_externa['rut_validado'] = "99.514.890-K"
+        data_externa['rut_valido'] = 'N/A (API Externa Caída)'
+        data_externa['rut_mensaje'] = "Error: La API externa de RUT no se pudo conectar (Fallo de DNS)."
+        # --------------------------------------------------------------------------
+
+    except Exception as e:
+        return HttpResponse(f"Error fatal. Detalle: {e}", status=500)
+        
+    return render(request, 'indicadores_externos.html', data_externa)
+
+# -------------------------------------------------------------------------
+
+
+# VISTAS PARA LA API REST
+
+# API 1: Lista de Productos
+class ProductoViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint para ver o editar productos.
+    """
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
+
+# API 2: Lista de Categorías
+class CategoriaViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint para ver o editar categorías.
+    """
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer

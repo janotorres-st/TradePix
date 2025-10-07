@@ -10,41 +10,7 @@
 </head>
 <body class="bg-dark text-white">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'index' %}">TradePix</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'index' %}">Inicio</a>
-                    </li>
-                    {% if user.is_authenticated %}
-                        {% if user.is_staff %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'gestion_usuarios' %}">Gestión de Usuarios</a>
-                        </li>
-                        {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'carrito' %}">Ver Carrito</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Registro</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
 
     <div class="container my-5">
         <header class="text-center mb-5">
@@ -55,7 +21,7 @@
         <section id="categorias">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'Aventura' %}" class="text-decoration-none">
+                    <a href="{% url 'categoria' 'Aventura'|urlencode %}" class="text-decoration-none">
                         <div class="card h-100 bg-secondary text-white border-0">
                             <img src="https://via.placeholder.com/150/007bff/FFFFFF?text=Aventura" class="card-img-top" alt="Categoría Aventura">
                             <div class="card-body">
@@ -65,7 +31,7 @@
                     </a>
                 </div>
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'Estrategia' %}" class="text-decoration-none">
+                    <a href="{% url 'categoria' 'Estrategia'|urlencode %}" class="text-decoration-none">
                         <div class="card h-100 bg-secondary text-white border-0">
                             <img src="https://via.placeholder.com/150/28a745/FFFFFF?text=Estrategia" class="card-img-top" alt="Categoría Estrategia">
                             <div class="card-body">
@@ -75,7 +41,7 @@
                     </a>
                 </div>
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'Deportes' %}" class="text-decoration-none">
+                    <a href="{% url 'categoria' 'Deportes'|urlencode %}" class="text-decoration-none">
                         <div class="card h-100 bg-secondary text-white border-0">
                             <img src="https://via.placeholder.com/150/dc3545/FFFFFF?text=Deportes" class="card-img-top" alt="Categoría Deportes">
                             <div class="card-body">
@@ -85,7 +51,7 @@
                     </a>
                 </div>
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'RPG' %}" class="text-decoration-none">
+                    <a href="{% url 'categoria' 'RPG'|urlencode %}" class="text-decoration-none">
                         <div class="card h-100 bg-secondary text-white border-0">
                             <img src="https://via.placeholder.com/150/ffc107/FFFFFF?text=RPG" class="card-img-top" alt="Categoría Rol">
                             <div class="card-body">
@@ -95,7 +61,7 @@
                     </a>
                 </div>
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'Simulacion' %}" class="text-decoration-none">
+                    <a href="{% url 'categoria' 'Simulacion'|urlencode %}" class="text-decoration-none">
                         <div class="card h-100 bg-secondary text-white border-0">
                             <img src="https://via.placeholder.com/150/17a2b8/FFFFFF?text=Simulacion" class="card-img-top" alt="Categoría Simulación">
                             <div class="card-body">
