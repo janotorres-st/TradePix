@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradePix - Catálogo de Videojuegos</title>
+    <title>TradePix - {% block title %}Catálogo de Videojuegos{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body class="bg-dark text-white">
 
@@ -17,63 +19,82 @@
             <h1 class="display-4">Bienvenido a TradePix</h1>
             <p class="lead">El centro de los videojuegos. Elige y comienza tu próxima aventura.</p>
         </header>
+        
+        {% if messages %}
+            <div class="container mb-4">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
+        <h2 class="text-center mb-4">Explora por Categoría</h2>
         <section id="categorias">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
+                
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'Aventura'|urlencode %}" class="text-decoration-none">
-                        <div class="card h-100 bg-secondary text-white border-0">
-                            <img src="https://via.placeholder.com/150/007bff/FFFFFF?text=Aventura" class="card-img-top" alt="Categoría Aventura">
+                    <a href="{% url 'filtrar_categoria' 'Aventura' %}" class="text-decoration-none">
+                        <div class="card h-100 bg-secondary text-white border-0 shadow">
+                            <img src="{% static 'img/categoria/aventura.jpg' %}" class="card-img-top" alt="Categoría Aventura">
                             <div class="card-body">
                                 <h5 class="card-title">Aventura</h5>
                             </div>
                         </div>
                     </a>
                 </div>
+                
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'Estrategia'|urlencode %}" class="text-decoration-none">
-                        <div class="card h-100 bg-secondary text-white border-0">
-                            <img src="https://via.placeholder.com/150/28a745/FFFFFF?text=Estrategia" class="card-img-top" alt="Categoría Estrategia">
+                    <a href="{% url 'filtrar_categoria' 'Estrategia' %}" class="text-decoration-none">
+                        <div class="card h-100 bg-secondary text-white border-0 shadow">
+                            <img src="{% static 'img/categoria/estrategia.jpg' %}" class="card-img-top" alt="Categoría Estrategia">
                             <div class="card-body">
                                 <h5 class="card-title">Estrategia</h5>
                             </div>
                         </div>
                     </a>
                 </div>
+                
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'Deportes'|urlencode %}" class="text-decoration-none">
-                        <div class="card h-100 bg-secondary text-white border-0">
-                            <img src="https://via.placeholder.com/150/dc3545/FFFFFF?text=Deportes" class="card-img-top" alt="Categoría Deportes">
+                    <a href="{% url 'filtrar_categoria' 'Deportes' %}" class="text-decoration-none">
+                        <div class="card h-100 bg-secondary text-white border-0 shadow">
+                            <img src="{% static 'img/categoria/deportes.jpg' %}" class="card-img-top" alt="Categoría Deportes">
                             <div class="card-body">
                                 <h5 class="card-title">Deportes</h5>
                             </div>
                         </div>
                     </a>
                 </div>
+                
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'RPG'|urlencode %}" class="text-decoration-none">
-                        <div class="card h-100 bg-secondary text-white border-0">
-                            <img src="https://via.placeholder.com/150/ffc107/FFFFFF?text=RPG" class="card-img-top" alt="Categoría Rol">
+                    <a href="{% url 'filtrar_categoria' 'Rol' %}" class="text-decoration-none">
+                        <div class="card h-100 bg-secondary text-white border-0 shadow">
+                            <img src="{% static 'img/categoria/rol.jpg' %}" class="card-img-top" alt="Categoría Rol">
                             <div class="card-body">
                                 <h5 class="card-title">Rol (RPG)</h5>
                             </div>
                         </div>
                     </a>
                 </div>
+                
                 <div class="col text-center">
-                    <a href="{% url 'categoria' 'Simulacion'|urlencode %}" class="text-decoration-none">
-                        <div class="card h-100 bg-secondary text-white border-0">
-                            <img src="https://via.placeholder.com/150/17a2b8/FFFFFF?text=Simulacion" class="card-img-top" alt="Categoría Simulación">
+                    <a href="{% url 'filtrar_categoria' 'Simulacion' %}" class="text-decoration-none">
+                        <div class="card h-100 bg-secondary text-white border-0 shadow">
+                            <img src="{% static 'img/categoria/simulacion.jpg' %}" class="card-img-top" alt="Categoría Simulación">
                             <div class="card-body">
                                 <h5 class="card-title">Simulación</h5>
                             </div>
                         </div>
                     </a>
                 </div>
+                
             </div>
         </section>
-    </div>
-
+        
+        </div>
+    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/main.js' %}"></script>

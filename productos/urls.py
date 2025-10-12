@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     # Rutas de navegación
     path('', views.index, name='index'),
-    path('categoria/<str:categoria_nombre>/', views.categoria, name='categoria'),
+    path('categoria/<str:categoria_nombre>/', views.categoria, name='filtrar_categoria'),
     path('producto/<int:producto_id>/', views.producto_detalle, name='producto_detalle'),
     path('mantenedor/', views.mantenedor, name='mantenedor'),
 

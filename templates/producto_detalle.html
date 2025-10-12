@@ -54,7 +54,7 @@
                 <h1 class="display-4">{{ producto.nombre }}</h1>
                 <p class="lead">{{ producto.descripcion }}</p>
                 <h3 class="fw-bold">${{ producto.precio }}</h3>
-                <p>Categoría: <a href="{% url 'categoria' producto.categoria.nombre %}" class="text-decoration-none text-info">{{ producto.categoria.nombre }}</a></p>
+                <p>Categoría: <a href="{% url 'filtrar_categoria' producto.categoria.nombre %}" class="text-decoration-none text-info">{{ producto.categoria.nombre }}</a></p>
                 <form action="{% url 'actualizar_carrito' producto.id %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="add">

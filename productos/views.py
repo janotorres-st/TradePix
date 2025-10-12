@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Q
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Producto, Categoria, Orden, OrdenItem
